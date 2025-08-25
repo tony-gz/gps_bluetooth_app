@@ -9,7 +9,9 @@ import '../services/puntos_guardados_service.dart';
 class FloatingActionButtonsWidget extends StatelessWidget {
   // Callbacks necesarios
   final VoidCallback onMostrarEstadisticasPrecision;
+  final VoidCallback onMostrarEstadisticasIntraTolerancia;
   final VoidCallback onGenerarReportePrecision;
+  final VoidCallback onGenerarReporteIntraTolerancia;
   final VoidCallback onToggleVisualizacionZonas;
   final VoidCallback onToggleMostrarSlider;
   final VoidCallback onToggleModoAgregarLinea;
@@ -37,10 +39,14 @@ class FloatingActionButtonsWidget extends StatelessWidget {
   final VoidCallback onLimpiarSeleccion;
   final VoidCallback onLimpiarLineas;
 
+  final VoidCallback onResetArduino;
+
   const FloatingActionButtonsWidget({
     Key? key,
     required this.onMostrarEstadisticasPrecision,
+    required this.onMostrarEstadisticasIntraTolerancia,
     required this.onGenerarReportePrecision,
+    required this.onGenerarReporteIntraTolerancia,
     required this.onToggleVisualizacionZonas,
     required this.onToggleMostrarSlider,
     required this.onToggleModoAgregarLinea,
@@ -55,6 +61,9 @@ class FloatingActionButtonsWidget extends StatelessWidget {
     required this.onCambiarModoEditor,
     required this.onLimpiarSeleccion,
     required this.onLimpiarLineas,
+
+    required this.onResetArduino,
+
     this.onResetearThrottling,
     this.onEnviarTest,
     this.onEnviarAvanzar,
@@ -75,6 +84,8 @@ class FloatingActionButtonsWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // botón de reset
+          _buildResetButton(context),
           // Grupo: Análisis y Reportes
           _buildAnalysisButtons(context),
 
@@ -100,6 +111,55 @@ class FloatingActionButtonsWidget extends StatelessWidget {
     );
   }
 
+  // AGREGAR este método:
+  Widget _buildResetButton(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildFloatingButton(
+          heroTag: 'btnReset',
+          tooltip: 'Reset Arduino del carrito',
+          onPressed: () => _handleResetArduino(context),
+          backgroundColor: Colors.red,
+          icon: Icons.restart_alt,
+        ),
+        const SizedBox(height: _buttonSpacing),
+      ],
+    );
+  }
+
+  // AGREGAR este método de manejo:
+  void _handleResetArduino(BuildContext context) {
+    // Mostrar confirmación
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar Reset'),
+        content: const Text('¿Resetear el Arduino del carrito?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onResetArduino();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('RESET', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+
+
+
+
   // Getters para mejorar legibilidad
   bool get _isEditorActive => editorDeLineas.modoEditor != ModoEditorLinea.inactivo;
   bool get _shouldShowMovementControls =>
@@ -109,24 +169,42 @@ class FloatingActionButtonsWidget extends StatelessWidget {
   bool get _hasLines => editorDeLineas.lineas.isNotEmpty;
   bool get _isMoveMode => editorDeLineas.modoEditor == ModoEditorLinea.mover;
 
+
+
   Widget _buildAnalysisButtons(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildFloatingButton(
           heroTag: 'btnEstadisticas',
-          tooltip: 'Ver estadísticas de precisión',
+          tooltip: 'Ver estadísticas de precisión global',
           onPressed: onMostrarEstadisticasPrecision,
           backgroundColor: Colors.deepPurple,
           icon: Icons.analytics,
         ),
         const SizedBox(height: _buttonSpacing),
         _buildFloatingButton(
+          heroTag: 'btnEstadisticasIntra',
+          tooltip: 'Ver estadísticas intra-tolerancia',
+          onPressed: onMostrarEstadisticasIntraTolerancia,
+          backgroundColor: Colors.teal,
+          icon: Icons.precision_manufacturing,
+        ),
+        const SizedBox(height: _buttonSpacing),
+        _buildFloatingButton(
           heroTag: 'btnReporte',
-          tooltip: 'Generar reporte de precisión',
+          tooltip: 'Generar reporte de precisión global',
           onPressed: () => _handleReportGeneration(context),
           backgroundColor: Colors.indigo,
           icon: Icons.assessment,
+        ),
+        const SizedBox(height: _buttonSpacing),
+        _buildFloatingButton(
+          heroTag: 'btnReporteIntraTolerancia',
+          tooltip: 'Generar reporte de precisión intra-tolerancia',
+          onPressed: () => _handleIntraToleranceReportGeneration(context),
+          backgroundColor: Colors.cyan,
+          icon: Icons.filter_list_alt,
         ),
         const SizedBox(height: _buttonSpacing),
       ],
@@ -159,7 +237,7 @@ class FloatingActionButtonsWidget extends StatelessWidget {
           icon: modoAgregarLinea ? Icons.close : Icons.timeline,
           tooltip: modoAgregarLinea
               ? 'Salir del modo línea'
-              : 'Entrar al modo para agregar línea A–B',
+              : 'Entrar al modo para agregar línea A—B',
           onPressed: onToggleModoAgregarLinea,
         ),
         const SizedBox(height: _buttonSpacing),
@@ -421,11 +499,19 @@ class FloatingActionButtonsWidget extends StatelessWidget {
     }
   }
 
+  void _handleIntraToleranceReportGeneration(BuildContext context) {
+    if (_hasSelectedLine) {
+      onGenerarReporteIntraTolerancia();
+    } else {
+      _showSnackBar(context, '⚠️ Selecciona una línea primero para análisis intra-tolerancia');
+    }
+  }
+
   void _handleSavePoints(BuildContext context) {
     if (_hasSelectedLine) {
       onGuardarPuntosCercanos();
     } else {
-      _showSnackBar(context, '● Selecciona una línea para guardar puntos cercanos');
+      _showSnackBar(context, '■ Selecciona una línea para guardar puntos cercanos');
     }
   }
 

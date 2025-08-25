@@ -250,4 +250,180 @@ class DialogsHelper {
       ),
     );
   }
+  // Agregar este método a la clase DialogsHelper
+
+  static void mostrarEstadisticasIntraTolerancia(
+      BuildContext context,
+      Map<String, dynamic> stats, {
+        VoidCallback? onGenerarReporte,
+      }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.precision_manufacturing, color: Colors.teal),
+            SizedBox(width: 8),
+            Text('Estadísticas Intra-Tolerancia'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (stats['mensaje'] != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[100],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.warning, color: Colors.orange),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(stats['mensaje'])),
+                    ],
+                  ),
+                )
+              else ...[
+                _buildStatCard(
+                  'Total de Puntos Analizados',
+                  '${stats['total_puntos_analizados']}',
+                  Icons.analytics,
+                  Colors.blue,
+                ),
+                const SizedBox(height: 12),
+                _buildStatCard(
+                  'Mejor Módulo (Distancia Promedio)',
+                  '${stats['mejor_modulo_promedio']}\n${stats['mejor_distancia_promedio']?.toStringAsFixed(3)} m',
+                  Icons.emoji_events,
+                  Colors.green,
+                ),
+                const SizedBox(height: 12),
+                _buildStatCard(
+                  'Mejor Módulo (Desviación Estándar)',
+                  '${stats['mejor_modulo_desviacion']}\n${stats['mejor_desviacion']?.toStringAsFixed(3)} m',
+                  Icons.show_chart,
+                  Colors.purple,
+                ),
+                const SizedBox(height: 12),
+                _buildStatCard(
+                  'Tolerancia Utilizada',
+                  '${stats['tolerancia_actual']?.toStringAsFixed(1)} metros',
+                  Icons.tune,
+                  Colors.orange,
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.teal[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.teal.shade200),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.teal, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Análisis Intra-Tolerancia',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Este análisis solo considera puntos que están dentro de la tolerancia especificada, descartando todos los puntos que excedan la distancia límite.',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cerrar'),
+          ),
+          if (onGenerarReporte != null && stats['total_puntos_analizados'] > 0)
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onGenerarReporte();
+              },
+              icon: const Icon(Icons.file_download),
+              label: const Text('Generar Reporte'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildStatCard(
+      String title,
+      String value,
+      IconData icon,
+      Color color,
+      ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
 }

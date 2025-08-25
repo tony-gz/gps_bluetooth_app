@@ -258,6 +258,66 @@ class _MapaPageState extends State<MapaPage> {
     setState(() {});
   }
 
+  // Agregar estos métodos a la clase _MapaPageState en mapa_page.dart
+
+  void _onMostrarEstadisticasIntraTolerancia() {
+    final stats = _dataProcessingService.obtenerEstadisticasIntraTolerancia();
+    DialogsHelper.mostrarEstadisticasIntraTolerancia(
+      context,
+      stats,
+      onGenerarReporte: _onGenerarReporteIntraTolerancia,
+    );
+  }
+
+  Future<void> _onGenerarReporteIntraTolerancia() async {
+    final lineaSeleccionada = _editorDeLineas.lineaSeleccionada;
+
+    if (lineaSeleccionada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('⚠️ Selecciona una línea de referencia primero'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    _dataProcessingService.configurarAnalisisPrecision(
+      toleranciaMetros: _toleranciaMetros,
+      lineaReferencia: lineaSeleccionada,
+    );
+
+    try {
+      DialogsHelper.mostrarProgreso(context, 'Generando reporte de precisión intra-tolerancia...');
+
+      await _dataProcessingService.generarReporteIntraTolerancia(
+        incluirDetallado: true,
+        nombrePersonalizado: 'precision_intra_tolerancia_${lineaSeleccionada.nombre}_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      DialogsHelper.cerrarDialogo(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('✅ Reporte de precisión intra-tolerancia generado y compartido'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      DialogsHelper.cerrarDialogo(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Error al generar reporte intra-tolerancia: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+
+
+
+
 
 
   // Solo necesitas reemplazar este método en tu mapa_page.dart
@@ -504,7 +564,9 @@ class _MapaPageState extends State<MapaPage> {
                       child: ListView.builder(
                         itemCount: _dataProcessingService.historial.length,
                         itemBuilder: (_, index) {
-                          final p = _dataProcessingService.historial[index];
+                          // CAMBIAR ESTA LÍNEA:
+                          final reversedIndex = _dataProcessingService.historial.length - 1 - index;
+                          final p = _dataProcessingService.historial[reversedIndex];
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             child: Text(
@@ -538,15 +600,20 @@ class _MapaPageState extends State<MapaPage> {
     );
   }
 
+
   Widget _buildFloatingActionButtons() {
     return FloatingActionButtonsWidget(
       onMostrarEstadisticasPrecision: _onMostrarEstadisticasPrecision,
       onGenerarReportePrecision: _onGenerarReportePrecision,
+      onMostrarEstadisticasIntraTolerancia: _onMostrarEstadisticasIntraTolerancia,
+      onGenerarReporteIntraTolerancia: _onGenerarReporteIntraTolerancia,
       onToggleVisualizacionZonas: _onToggleVisualizacionZonas,
       onToggleMostrarSlider: _onToggleMostrarSlider,
       onToggleModoAgregarLinea: _onToggleModoAgregarLinea,
       onGuardarPuntosCercanos: _onGuardarPuntosCercanos,
       onIniciarRecorrido: _onIniciarRecorrido,
+      // AGREGAR esta línea:
+      onResetArduino: _onResetArduino,
       onResetearThrottling: _dataProcessingService.recorridoService?.resetearThrottling,
       onEnviarTest: _dataProcessingService.recorridoService?.enviarTest,
       onEnviarAvanzar: _dataProcessingService.recorridoService?.enviarAvanzar,
@@ -559,6 +626,7 @@ class _MapaPageState extends State<MapaPage> {
       modoAgregarLinea: _modoAgregarLinea,
       mostrarSlider: _mostrarSlider,
       onAjustarVerticeSeleccionado: _onAjustarVerticeSeleccionado,
+
       // Callbacks adicionales para operaciones del editor
       onCambiarModoEditor: (modo) {
         setState(() {
@@ -634,6 +702,38 @@ class _MapaPageState extends State<MapaPage> {
         ],
       ),
     );
+  }
+  // AGREGAR este método:
+  Future<void> _onResetArduino() async {
+    try {
+      String resetCommand = "RESET_ARDUINO\n";
+
+      // Enviar por Bluetooth
+      await _bluetoothManager.enviarComando(resetCommand);
+
+      // Mostrar confirmación
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 10),
+              Text('Comando de reset enviado al Arduino'),
+            ],
+          ),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error enviando reset: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

@@ -32,11 +32,11 @@ class DataProcessingService {
   final List<GeoPoint> _historialGlobal = [];
 
   // Configuración
-  static const double minDistanceMeters = 0.2;
+  static const double minDistanceMeters = 0.1;
   static const double _radioZona = 10.0;
-  static const int _maxPuntosZona = 200;
-  static const int maxHistorial = 1000;
-  static const int maxPuntosGlobales = 1000;
+  static const int _maxPuntosZona = 20000;
+  static const int maxHistorial = 20000;
+  static const int maxPuntosGlobales = 20000;
 
   // Callbacks para notificar cambios
   Function(LatLng)? onPositionChanged;
@@ -350,6 +350,30 @@ class DataProcessingService {
       'promedio': ultimosPromedio,
     };
   }
+
+  // Agregar estos métodos a la clase DataProcessingService
+
+// Generar reporte de precisión intra-tolerancia
+  Future<void> generarReporteIntraTolerancia({
+    bool incluirDetallado = true,
+    String? nombrePersonalizado,
+  }) async {
+    await _comparadorPrecision.generarYCompartirReporteIntraTolerancia(
+      incluirDetallado: incluirDetallado,
+      nombrePersonalizado: nombrePersonalizado,
+    );
+  }
+
+// Obtener estadísticas de precisión intra-tolerancia
+  Map<String, dynamic> obtenerEstadisticasIntraTolerancia() {
+    return _comparadorPrecision.obtenerEstadisticasIntraTolerancia();
+  }
+
+
+
+
+
+
 
   /// Libera recursos
   void dispose() {

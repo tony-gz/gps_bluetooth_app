@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../models/geopoint.dart';
+import 'dart:typed_data'; // ← Para el metodo eviarComando (resetea)
 
 class BluetoothManager {
   final BluetoothConnection _conexion;
@@ -67,6 +68,17 @@ class BluetoothManager {
       return GeoPoint(latitud: lat, longitud: lng, tiempo: tiempo);
     } catch (_) {
       return null;
+    }
+  }
+
+
+  // AGREGAR este método:
+  Future<void> enviarComando(String comando) async {
+    if (conexion.isConnected) {
+      conexion.output.add(Uint8List.fromList(comando.codeUnits));
+      await conexion.output.allSent;
+    } else {
+      throw Exception('No hay conexión Bluetooth activa');
     }
   }
 }
