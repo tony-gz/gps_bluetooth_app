@@ -1,4 +1,3 @@
-// PASO 1A: Crear el archivo services/bluetooth_manager.dart
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -57,7 +56,7 @@ class BluetoothManager {
     }
   }
 
-  // Método estático para parsear posición (movido desde mapa_page)
+  // Método estático para parsear posición
   static GeoPoint? parsearPosicion(String data) {
     try {
       final partes = data.trim().split(',');
@@ -71,8 +70,6 @@ class BluetoothManager {
     }
   }
 
-
-  // AGREGAR este método:
   Future<void> enviarComando(String comando) async {
     if (conexion.isConnected) {
       conexion.output.add(Uint8List.fromList(comando.codeUnits));

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gps_bluetooth_app/ui/seleccionar_dispositivo_page.dart';
-//import 'ui/mapa_page.dart';
 
 void main() {
   runApp(const MyApp());

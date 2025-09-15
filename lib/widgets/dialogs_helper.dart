@@ -1,8 +1,6 @@
-// PASO 2A: Crear el archivo widgets/dialogs_helper.dart
 import 'package:flutter/material.dart';
 
 class DialogsHelper {
-
   // Diálogo de confirmación para desconectar Bluetooth
   static Future<bool> mostrarConfirmacionDesconexion(BuildContext context) async {
     final resultado = await showDialog<bool>(
@@ -423,7 +421,4 @@ class DialogsHelper {
       ),
     );
   }
-
-
-
 }

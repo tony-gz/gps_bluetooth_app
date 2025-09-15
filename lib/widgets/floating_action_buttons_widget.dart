@@ -88,22 +88,16 @@ class FloatingActionButtonsWidget extends StatelessWidget {
           _buildResetButton(context),
           // Grupo: Análisis y Reportes
           _buildAnalysisButtons(context),
-
           // Grupo: Visualización
           _buildVisualizationButtons(context),
-
           // Grupo: Editor de Líneas
           if (_isEditorActive) _buildEditorButtons(context),
-
           // Grupo: Controles de Movimiento
           if (_shouldShowMovementControls) _buildMovementControls(context),
-
           // Botón principal del editor
           _buildMainEditorButton(context),
-
           // Botón de recorrido
           _buildRouteButton(context),
-
           // Controles de prueba (solo si hay recorrido activo)
           if (recorridoService != null) _buildTestControls(context),
         ],
@@ -111,7 +105,6 @@ class FloatingActionButtonsWidget extends StatelessWidget {
     );
   }
 
-  // AGREGAR este método:
   Widget _buildResetButton(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -128,7 +121,6 @@ class FloatingActionButtonsWidget extends StatelessWidget {
     );
   }
 
-  // AGREGAR este método de manejo:
   void _handleResetArduino(BuildContext context) {
     // Mostrar confirmación
     showDialog(
@@ -153,13 +145,6 @@ class FloatingActionButtonsWidget extends StatelessWidget {
       ),
     );
   }
-
-
-
-
-
-
-
   // Getters para mejorar legibilidad
   bool get _isEditorActive => editorDeLineas.modoEditor != ModoEditorLinea.inactivo;
   bool get _shouldShowMovementControls =>
@@ -168,8 +153,6 @@ class FloatingActionButtonsWidget extends StatelessWidget {
   bool get _hasSelectedLine => editorDeLineas.lineaSeleccionada != null;
   bool get _hasLines => editorDeLineas.lineas.isNotEmpty;
   bool get _isMoveMode => editorDeLineas.modoEditor == ModoEditorLinea.mover;
-
-
 
   Widget _buildAnalysisButtons(BuildContext context) {
     return Column(
@@ -182,14 +165,7 @@ class FloatingActionButtonsWidget extends StatelessWidget {
           backgroundColor: Colors.deepPurple,
           icon: Icons.analytics,
         ),
-        const SizedBox(height: _buttonSpacing),
-        _buildFloatingButton(
-          heroTag: 'btnEstadisticasIntra',
-          tooltip: 'Ver estadísticas intra-tolerancia',
-          onPressed: onMostrarEstadisticasIntraTolerancia,
-          backgroundColor: Colors.teal,
-          icon: Icons.precision_manufacturing,
-        ),
+
         const SizedBox(height: _buttonSpacing),
         _buildFloatingButton(
           heroTag: 'btnReporte',
@@ -231,15 +207,7 @@ class FloatingActionButtonsWidget extends StatelessWidget {
           icon: Icons.tune,
           tooltip: 'Ajustar tolerancia',
         ),
-        const SizedBox(height: _buttonSpacing),
-        _buildFloatingButton(
-          heroTag: 'btnModoLinea',
-          icon: modoAgregarLinea ? Icons.close : Icons.timeline,
-          tooltip: modoAgregarLinea
-              ? 'Salir del modo línea'
-              : 'Entrar al modo para agregar línea A—B',
-          onPressed: onToggleModoAgregarLinea,
-        ),
+
         const SizedBox(height: _buttonSpacing),
         _buildFloatingButton(
           heroTag: 'btnGuardar',

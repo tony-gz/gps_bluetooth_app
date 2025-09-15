@@ -258,8 +258,6 @@ class _MapaPageState extends State<MapaPage> {
     setState(() {});
   }
 
-  // Agregar estos métodos a la clase _MapaPageState en mapa_page.dart
-
   void _onMostrarEstadisticasIntraTolerancia() {
     final stats = _dataProcessingService.obtenerEstadisticasIntraTolerancia();
     DialogsHelper.mostrarEstadisticasIntraTolerancia(
@@ -314,14 +312,6 @@ class _MapaPageState extends State<MapaPage> {
     }
   }
 
-
-
-
-
-
-
-  // Solo necesitas reemplazar este método en tu mapa_page.dart
-
   void _onAjustarVerticeSeleccionado(double deltaLat, double deltaLng) {
     setState(() {
       _editorDeLineas.ajustarVerticeSeleccionado(deltaLat, deltaLng);
@@ -329,7 +319,6 @@ class _MapaPageState extends State<MapaPage> {
     _regenerarSubWaypoints();
   }
 
-// Y también asegurar que el método _regenerarSubWaypoints tenga setState:
   void _regenerarSubWaypoints() {
     if (_dataProcessingService.recorridoService != null) {
       final nuevoRecorrido = RecorridoService(
@@ -358,7 +347,6 @@ class _MapaPageState extends State<MapaPage> {
   }
 
   // ========== CALLBACKS DEL MAPA ==========
-
   void _onMapTap(BuildContext context, LatLng point) {
     final modo = _editorDeLineas.modoEditor;
 
@@ -469,8 +457,6 @@ class _MapaPageState extends State<MapaPage> {
     );
   }
 
-  // Y modificar el _buildBody para pasar el callback:
-
   Widget _buildBody(Map<String, List<LatLng>> puntosFiltrados) {
     return Stack(
       children: [
@@ -503,8 +489,6 @@ class _MapaPageState extends State<MapaPage> {
                 ],
               ),
             ),
-
-            // Resto del código del slider y panel de información permanece igual...
             if (_mostrarSlider)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -564,7 +548,6 @@ class _MapaPageState extends State<MapaPage> {
                       child: ListView.builder(
                         itemCount: _dataProcessingService.historial.length,
                         itemBuilder: (_, index) {
-                          // CAMBIAR ESTA LÍNEA:
                           final reversedIndex = _dataProcessingService.historial.length - 1 - index;
                           final p = _dataProcessingService.historial[reversedIndex];
                           return Padding(
@@ -583,7 +566,6 @@ class _MapaPageState extends State<MapaPage> {
             ),
           ],
         ),
-
         // Leyenda de zonas
         LeyendaZonasWidget(
           visualizador: _dataProcessingService.visualizadorZonas,
@@ -612,7 +594,6 @@ class _MapaPageState extends State<MapaPage> {
       onToggleModoAgregarLinea: _onToggleModoAgregarLinea,
       onGuardarPuntosCercanos: _onGuardarPuntosCercanos,
       onIniciarRecorrido: _onIniciarRecorrido,
-      // AGREGAR esta línea:
       onResetArduino: _onResetArduino,
       onResetearThrottling: _dataProcessingService.recorridoService?.resetearThrottling,
       onEnviarTest: _dataProcessingService.recorridoService?.enviarTest,

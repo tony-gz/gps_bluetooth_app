@@ -330,7 +330,6 @@ class _MapControllerWidgetState extends State<MapControllerWidget> {
   void _onVerticeMovido() {
     if (mounted) {
       setState(() {
-        // Esto fuerza el rebuild del widget
       });
     }
   }

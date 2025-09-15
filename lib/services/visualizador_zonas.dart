@@ -1,5 +1,3 @@
-// Archivo: lib/services/visualizador_zonas.dart
-
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';

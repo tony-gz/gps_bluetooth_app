@@ -1,5 +1,3 @@
-// Mejoras para tu SeleccionarDispositivoPage.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../services/bluetooth_service.dart';

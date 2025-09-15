@@ -7,7 +7,6 @@ import '../services/recorrido_service.dart';
 import '../services/visualizador_zonas.dart';
 
 /// Servicio encargado de procesar y gestionar todos los datos GPS
-/// Separa la lógica de procesamiento del widget principal
 class DataProcessingService {
   // Servicios
   final ArchivoGPS _archivoGPS = ArchivoGPS();
@@ -60,7 +59,6 @@ class DataProcessingService {
   void configurarRecorrido(RecorridoService? servicio) {
     _recorridoService = servicio;
   }
-
   /// Procesa datos de Bluetooth parseados
   Future<void> procesarDatosBluetooth(GeoPoint punto, String dataOriginal) async {
     // Actualizar posición actual
@@ -134,7 +132,6 @@ class DataProcessingService {
       }
     }
   }
-
   /// Procesa punto combinado
   Future<void> _procesarPuntoCombinado(GeoPoint punto, LatLng posicionLatLng) async {
     if (_puntoC == null ||
@@ -150,7 +147,6 @@ class DataProcessingService {
       }
     }
   }
-
   /// Determina si un punto está en la misma zona
   bool _estaEnMismaZona(GeoPoint nuevoPunto) {
     if (_puntoZona == null) return false;
@@ -158,7 +154,6 @@ class DataProcessingService {
     final p2 = LatLng(nuevoPunto.latitud, nuevoPunto.longitud);
     return _distance(p1, p2) <= _radioZona;
   }
-
   /// Procesa un punto en el sistema de zonas
   void _procesarPunto(GeoPoint punto) {
     if (_puntoZona == null || !_estaEnMismaZona(punto)) {
@@ -192,7 +187,6 @@ class DataProcessingService {
       _historialGlobal.removeRange(0, puntosAEliminar);
     }
   }
-
   /// Imprime el estado actual del historial para debugging
   void _imprimirEstadoHistorial() {
     print('=' * 50);
@@ -205,7 +199,6 @@ class DataProcessingService {
     }
     print('=' * 50);
   }
-
   /// Limpia todo el historial
   void limpiarHistorialGlobal() {
     _historialGlobal.clear();
@@ -230,7 +223,6 @@ class DataProcessingService {
     final estaActivoAhora = _visualizadorZonas.toggle(_historialGlobal);
     return estaActivoAhora;
   }
-
   /// Configura el análisis de precisión
   void configurarAnalisisPrecision({
     required double toleranciaMetros,
@@ -328,14 +320,12 @@ class DataProcessingService {
         puntoB: puntoB,
         toleranciaMetros: toleranciaMetros,
       );
-
       ultimosNeo6m = filtrarPuntosCercanos(
         puntos: ultimosNeo6m,
         puntoA: puntoA,
         puntoB: puntoB,
         toleranciaMetros: toleranciaMetros,
       );
-
       ultimosPromedio = filtrarPuntosCercanos(
         puntos: ultimosPromedio,
         puntoA: puntoA,
@@ -343,16 +333,12 @@ class DataProcessingService {
         toleranciaMetros: toleranciaMetros,
       );
     }
-
     return {
       'adafruit': ultimosAdafruit,
       'neo6m': ultimosNeo6m,
       'promedio': ultimosPromedio,
     };
   }
-
-  // Agregar estos métodos a la clase DataProcessingService
-
 // Generar reporte de precisión intra-tolerancia
   Future<void> generarReporteIntraTolerancia({
     bool incluirDetallado = true,
@@ -363,18 +349,10 @@ class DataProcessingService {
       nombrePersonalizado: nombrePersonalizado,
     );
   }
-
 // Obtener estadísticas de precisión intra-tolerancia
   Map<String, dynamic> obtenerEstadisticasIntraTolerancia() {
     return _comparadorPrecision.obtenerEstadisticasIntraTolerancia();
   }
-
-
-
-
-
-
-
   /// Libera recursos
   void dispose() {
     _visualizadorZonas.limpiar();
